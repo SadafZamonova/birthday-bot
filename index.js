@@ -50,8 +50,8 @@ app.listen(PORT, () => {
 
 // Запуск проверки дней рождения через cron
 const cron = require('node-cron');
-cron.schedule('00 15 * * *', () => {
-  console.log('⏰ Запуск автоматической проверки в 15:00...');
+cron.schedule('20 15 * * *', () => {
+  console.log('⏰ Запуск автоматической проверки в 15:20...');
   checkBirthdays();
 });
 
@@ -59,3 +59,4 @@ bot.onText(/\/start/, (msg) => {
   bot.sendMessage(msg.chat.id, 'Привет! Я бот для напоминания о днях рождения.');
 });
 
+console.log('Bot starting at', new Date().toISOString());
