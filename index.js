@@ -33,8 +33,8 @@ function checkBirthdays() {
   });
 }
 
-cron.schedule('18 14 * * *', () => {
-  console.log('⏰ Запуск автоматической проверки в 14:18...');
+cron.schedule('35 14 * * *', () => {
+  console.log('⏰ Запуск автоматической проверки в 14:35...');
   checkBirthdays();
 });
 
