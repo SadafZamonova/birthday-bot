@@ -15,7 +15,7 @@ app.listen(PORT, () => {
   console.log(`Server listening on port ${PORT}`);
 });
 
-const birthdays = require('./birthday.json');
+const birthdays = require('./birthdays.json');
 
 function checkBirthdays() {
   const today = dayjs().utc().startOf('day');
@@ -33,8 +33,8 @@ function checkBirthdays() {
   });
 }
 
-cron.schedule('15 14 * * *', () => {
-  console.log('⏰ Запуск автоматической проверки в 14:15...');
+cron.schedule('18 14 * * *', () => {
+  console.log('⏰ Запуск автоматической проверки в 14:18...');
   checkBirthdays();
 });
 
