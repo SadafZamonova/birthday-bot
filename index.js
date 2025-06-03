@@ -15,6 +15,15 @@ bot.on('message', (msg) => {
     console.log('Получено сообщение из чата:', msg.chat);
   })
 
+//   bot.on('message', (msg) => {
+//     console.log('Сообщение из чата:', msg.chat);
+//   });
+
+//   app.post('/webhook', (req, res) => {
+//     console.log('Получено обновление:', JSON.stringify(req.body, null, 2));
+//     bot.processUpdate(req.body);
+//     res.sendStatus(200);
+//   });
 const PORT = process.env.PORT || 3000;
 const WEBHOOK_URL = process.env.WEBHOOK_URL; // Должен быть https://yourdomain.com/webhook
 
@@ -42,10 +51,16 @@ function checkBirthdays() {
 }
 
 // Маршрут для Telegram webhook
+// app.post('/webhook', (req, res) => {
+//   bot.processUpdate(req.body);
+//   res.sendStatus(200);
+// });
+
 app.post('/webhook', (req, res) => {
-  bot.processUpdate(req.body);
-  res.sendStatus(200);
-});
+    console.log('Получено обновление:', JSON.stringify(req.body, null, 2));
+    bot.processUpdate(req.body);
+    res.sendStatus(200);
+  });
 
 app.get('/', (req, res) => res.send('Bot is running'));
 console.log('process.env.PORT =', process.env.PORT);
@@ -55,8 +70,8 @@ app.listen(PORT, () => {
 
 // Запуск проверки дней рождения через cron
 const cron = require('node-cron');
-cron.schedule('40 11 * * *', () => {
-    console.log('⏰ Автоматическая проверка дней рождений в 16:40 по Ташкенту (11:40 UTC)...');
+cron.schedule('59 11 * * *', () => {
+    console.log('⏰ Автоматическая проверка дней рождений в 16:59 по Ташкенту (11:59 UTC)...');
     checkBirthdays();
   });
 
