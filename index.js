@@ -1,19 +1,23 @@
 require('dotenv').config();
 const express = require('express');
-const cron = require('node-cron');
 const TelegramBot = require('node-telegram-bot-api');
 const dayjs = require('dayjs');
 const utc = require('dayjs/plugin/utc');
 dayjs.extend(utc);
 
 const app = express();
-const bot = new TelegramBot(process.env.TELEGRAM_TOKEN, { polling: true });
+app.use(express.json()); // для парсинга JSON из webhook
+
+const token = process.env.TELEGRAM_TOKEN;
+const bot = new TelegramBot(token, { webHook: true });
 
 const PORT = process.env.PORT || 3000;
-app.get('/', (req, res) => res.send('Bot is running'));
-app.listen(PORT, () => {
-  console.log(`Server listening on port ${PORT}`);
-});
+const WEBHOOK_URL = process.env.WEBHOOK_URL; // Должен быть https://yourdomain.com/webhook
+
+// Устанавливаем webhook при запуске сервера
+bot.setWebHook(`${WEBHOOK_URL}/webhook`).then(() => {
+  console.log('Webhook установлен на:', `${WEBHOOK_URL}/webhook`);
+}).catch(console.error);
 
 const birthdays = require('./birthdays.json');
 
@@ -33,8 +37,21 @@ function checkBirthdays() {
   });
 }
 
-cron.schedule('35 14 * * *', () => {
-  console.log('⏰ Запуск автоматической проверки в 14:35...');
+// Маршрут для Telegram webhook
+app.post('/webhook', (req, res) => {
+  bot.processUpdate(req.body);
+  res.sendStatus(200);
+});
+
+app.get('/', (req, res) => res.send('Bot is running'));
+app.listen(PORT, () => {
+  console.log(`Server listening on port ${PORT}`);
+});
+
+// Запуск проверки дней рождения через cron
+const cron = require('node-cron');
+cron.schedule('00 15 * * *', () => {
+  console.log('⏰ Запуск автоматической проверки в 15:00...');
   checkBirthdays();
 });
 
