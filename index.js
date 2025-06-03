@@ -2,37 +2,42 @@ require('dotenv').config();
 const express = require('express');
 const cron = require('node-cron');
 const TelegramBot = require('node-telegram-bot-api');
+const dayjs = require('dayjs');
+const utc = require('dayjs/plugin/utc');
+dayjs.extend(utc);
 
 const app = express();
+const bot = new TelegramBot(process.env.TELEGRAM_TOKEN, { polling: true });
 
-const TOKEN = process.env.TELEGRAM_TOKEN; // положи сюда свой токен через env-переменную
-const bot = new TelegramBot(TOKEN, { polling: true });
-
-// HTTP-сервер (нужно, чтобы Render не ругался)
 const PORT = process.env.PORT || 3000;
 app.get('/', (req, res) => res.send('Bot is running'));
 app.listen(PORT, () => {
   console.log(`Server listening on port ${PORT}`);
 });
 
-// Пример функции проверки дней рождения
+const birthdays = require('./birthday.json');
+
 function checkBirthdays() {
-  console.log('Проверяем дни рождения...');
-  // Твой код проверки и отправки сообщений
+  const today = dayjs().utc().startOf('day');
+  const thisYear = today.year();
+
+  birthdays.forEach(({ name, date }) => {
+    const birthdayThisYear = dayjs(`${thisYear}-${date}`);
+    const diff = birthdayThisYear.diff(today, 'day');
+
+    if (diff === 2) {
+      bot.sendMessage(process.env.CHAT_ID, `📅 Через 2 дня день рождения у ${name}!`);
+    } else if (diff === 0) {
+      bot.sendMessage(process.env.CHAT_ID, `🎉 Поздравляем с днём рождения, ${name}!`);
+    }
+  });
 }
 
-// Запускаем cron задачу каждый день в 11:00
-// cron.schedule('0 11 * * *', () => {
-//   console.log('⏰ Запуск автоматической проверки в 11:00...');
-//   checkBirthdays();
-// });
+cron.schedule('15 14 * * *', () => {
+  console.log('⏰ Запуск автоматической проверки в 14:15...');
+  checkBirthdays();
+});
 
-cron.schedule('55 13 * * *', () => {
-    console.log('⏰ Запуск автоматической проверки в 13:55...');
-    checkBirthdays();
-  });
-
-// Пример реакции на команды
 bot.onText(/\/start/, (msg) => {
   bot.sendMessage(msg.chat.id, 'Привет! Я бот для напоминания о днях рождения.');
 });
