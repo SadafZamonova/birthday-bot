@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require('express');
 const cron = require('node-cron');
 const TelegramBot = require('node-telegram-bot-api');
