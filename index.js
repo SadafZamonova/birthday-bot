@@ -56,6 +56,13 @@ function checkBirthdays() {
 //   res.sendStatus(200);
 // });
 
+app.listen(PORT, () => {
+    console.log(`Server listening on port ${PORT}`);
+    bot.sendMessage(process.env.CHAT_ID, 'Бот запущен и готов отправлять сообщения!');
+    checkBirthdays(); // можно убрать позже
+  });
+
+
 app.post('/webhook', (req, res) => {
     console.log('Получено обновление:', JSON.stringify(req.body, null, 2));
     bot.processUpdate(req.body);
