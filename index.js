@@ -34,9 +34,9 @@ function checkBirthdays() {
     const diff = birthdayThisYear.diff(today, 'day');
 
     if (diff === 2) {
-      bot.sendMessage(process.env.CHAT_ID, `📅 Через 2 дня день рождения у ${name}!`);
+      bot.sendMessage(process.env.CHAT_ID, `📅 Через 2 дня день рождения у "${name}"!`);
     } else if (diff === 0) {
-      bot.sendMessage(process.env.CHAT_ID, `🎉 Поздравляем с днём рождения, ${name}!`);
+      bot.sendMessage(process.env.CHAT_ID, `🎉 Поздравляем с днём рождения, "${name}"!`);
     }
   });
 }
@@ -55,8 +55,8 @@ app.listen(PORT, () => {
 
 // Запуск проверки дней рождения через cron
 const cron = require('node-cron');
-cron.schedule('26 11 * * *', () => {
-    console.log('⏰ Автоматическая проверка дней рождений в 16:26 по Ташкенту (11:26 UTC)...');
+cron.schedule('40 11 * * *', () => {
+    console.log('⏰ Автоматическая проверка дней рождений в 16:40 по Ташкенту (11:40 UTC)...');
     checkBirthdays();
   });
 
