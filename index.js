@@ -22,10 +22,15 @@ function checkBirthdays() {
 }
 
 // Запускаем cron задачу каждый день в 11:00
-cron.schedule('0 11 * * *', () => {
-  console.log('⏰ Запуск автоматической проверки в 11:00...');
-  checkBirthdays();
-});
+// cron.schedule('0 11 * * *', () => {
+//   console.log('⏰ Запуск автоматической проверки в 11:00...');
+//   checkBirthdays();
+// });
+
+cron.schedule('55 13 * * *', () => {
+    console.log('⏰ Запуск автоматической проверки в 13:55...');
+    checkBirthdays();
+  });
 
 // Пример реакции на команды
 bot.onText(/\/start/, (msg) => {
