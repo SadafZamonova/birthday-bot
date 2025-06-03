@@ -44,6 +44,7 @@ app.post('/webhook', (req, res) => {
 });
 
 app.get('/', (req, res) => res.send('Bot is running'));
+console.log('process.env.PORT =', process.env.PORT);
 app.listen(PORT, () => {
   console.log(`Server listening on port ${PORT}`);
 });
