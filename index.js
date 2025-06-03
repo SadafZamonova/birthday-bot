@@ -11,6 +11,10 @@ app.use(express.json()); // для парсинга JSON из webhook
 const token = process.env.TELEGRAM_TOKEN;
 const bot = new TelegramBot(token, { webHook: true });
 
+bot.on('message', (msg) => {
+    console.log('Получено сообщение из чата:', msg.chat);
+  })
+
 const PORT = process.env.PORT || 3000;
 const WEBHOOK_URL = process.env.WEBHOOK_URL; // Должен быть https://yourdomain.com/webhook
 
