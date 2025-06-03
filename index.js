@@ -51,10 +51,10 @@ app.listen(PORT, () => {
 
 // Запуск проверки дней рождения через cron
 const cron = require('node-cron');
-cron.schedule('20 15 * * *', () => {
-  console.log('⏰ Запуск автоматической проверки в 15:20...');
-  checkBirthdays();
-});
+cron.schedule('40 10 * * *', () => {
+    console.log('⏰ Автоматическая проверка дней рождений в 15:40 по Ташкенту (10:40 UTC)...');
+    checkBirthdays();
+  });
 
 bot.onText(/\/start/, (msg) => {
   bot.sendMessage(msg.chat.id, 'Привет! Я бот для напоминания о днях рождения.');
