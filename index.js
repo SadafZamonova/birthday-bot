@@ -55,8 +55,8 @@ app.listen(PORT, () => {
 
 // Запуск проверки дней рождения через cron
 const cron = require('node-cron');
-cron.schedule('20 11 * * *', () => {
-    console.log('⏰ Автоматическая проверка дней рождений в 16:20 по Ташкенту (11:10 UTC)...');
+cron.schedule('26 11 * * *', () => {
+    console.log('⏰ Автоматическая проверка дней рождений в 16:26 по Ташкенту (11:26 UTC)...');
     checkBirthdays();
   });
 
