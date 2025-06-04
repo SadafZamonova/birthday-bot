@@ -1,5 +1,5 @@
 require('dotenv').config();
-
+console.log('TOKEN из .env:', process.env.TELEGRAM_TOKEN);
 const express = require('express');
 const TelegramBot = require('node-telegram-bot-api');
 const dayjs = require('dayjs');
@@ -23,7 +23,9 @@ if (!token || !WEBHOOK_URL || !CHAT_ID) {
 const bot = new TelegramBot(token, { webHook: true });
 const app = express();
 app.use(express.json());
-
+bot.getMe()
+  .then(console.log)
+  .catch(console.error);
 const birthdays = require('./birthdays.json');
 
 // Функция проверки дней рождения
