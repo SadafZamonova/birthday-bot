@@ -1,4 +1,8 @@
 require('dotenv').config();
+
+console.log('TOKEN:', process.env.TELEGRAM_TOKEN);
+console.log('WEBHOOK_URL:', process.env.WEBHOOK_URL);
+
 const express = require('express');
 const TelegramBot = require('node-telegram-bot-api');
 const dayjs = require('dayjs');
@@ -16,6 +20,9 @@ const bot = new TelegramBot(token, { webHook: true });
 const PORT = process.env.PORT || 3000;
 const WEBHOOK_URL = process.env.WEBHOOK_URL;
 const CHAT_ID = process.env.CHAT_ID;
+
+console.log('TOKEN:', process.env.TELEGRAM_TOKEN);
+console.log('WEBHOOK_URL:', process.env.WEBHOOK_URL);
 
 const birthdays = require('./birthdays.json');
 
