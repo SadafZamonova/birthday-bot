@@ -1,5 +1,9 @@
 require('dotenv').config();
 console.log('Загруженный токен из .env:', process.env.TELEGRAM_TOKEN);
+console.log('Проверка переменных из .env:');
+console.log('TELEGRAM_TOKEN:', process.env.TELEGRAM_TOKEN);
+console.log('WEBHOOK_URL:', process.env.WEBHOOK_URL);
+console.log('CHAT_ID:', process.env.CHAT_ID);
 
 const express = require('express');
 const TelegramBot = require('node-telegram-bot-api');
@@ -77,7 +81,7 @@ bot.onText(/\/start/, (msg) => {
 });
 
 // Cron-задание для ежедневной проверки (пример — 06:35 UTC = 11:35 Ташкент)
-cron.schedule('35 6 * * *', () => {
-  console.log('⏰ Автоматическая проверка дней рождений в 11:35 по Ташкенту (06:35 UTC)...');
+cron.schedule('00 7 * * *', () => {
+  console.log('⏰ Автоматическая проверка дней рождений в 12:00 по Ташкенту (07:00 UTC)...');
   checkBirthdays();
 });
