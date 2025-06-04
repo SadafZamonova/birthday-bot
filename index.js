@@ -17,12 +17,26 @@ app.use(express.json());
 const token = process.env.TELEGRAM_TOKEN;
 const bot = new TelegramBot(token, { webHook: true });
 
+bot.getMe()
+  .then(botInfo => {
+    console.log('✅ Токен рабочий. Информация о боте:', botInfo);
+
+    bot.setWebHook(`${WEBHOOK_URL}/webhook`)
+      .then(() => {
+        console.log('Webhook установлен на:', `${WEBHOOK_URL}/webhook`);
+      })
+      .catch(console.error);
+
+  })
+  .catch(err => {
+    console.error('❌ Ошибка авторизации (неверный токен?):', err);
+    process.exit(1);
+  });
+
 const PORT = process.env.PORT || 3000;
 const WEBHOOK_URL = process.env.WEBHOOK_URL;
 const CHAT_ID = process.env.CHAT_ID;
 
-console.log('TOKEN:', process.env.TELEGRAM_TOKEN);
-console.log('WEBHOOK_URL:', process.env.WEBHOOK_URL);
 
 const birthdays = require('./birthdays.json');
 
