@@ -98,7 +98,7 @@ app.listen(PORT, async () => {
     await bot.setWebHook(`${WEBHOOK_URL}/webhook`);
     console.log('Webhook установлен на:', `${WEBHOOK_URL}/webhook`);
 
-    bot.sendMessage(CHAT_ID, 'Бот запущен и готов отправлять сообщения!');
+    // bot.sendMessage(CHAT_ID, 'Бот запущен и готов отправлять сообщения!');
     checkBirthdays();
   } catch (err) {
     console.error('❌ Ошибка авторизации или установки webhook:', err);
