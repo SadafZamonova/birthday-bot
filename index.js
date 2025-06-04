@@ -12,8 +12,13 @@ const token = process.env.TELEGRAM_TOKEN;
 const bot = new TelegramBot(token, { webHook: true });
 
 bot.on('message', (msg) => {
-    console.log('Получено сообщение из чата:', msg.chat);
-  })
+    console.log('Новое сообщение:', JSON.stringify(msg, null, 2));
+  });
+
+bot.onText(/\/start/, (msg) => {
+    console.log('Команда /start получена от:', msg.from);
+    bot.sendMessage(msg.chat.id, 'Привет! Я бот для напоминания о днях рождения.');
+  });
 
 //   bot.on('message', (msg) => {
 //     console.log('Сообщение из чата:', msg.chat);
