@@ -39,10 +39,14 @@ function checkBirthdays() {
     const diff = birthdayThisYear.diff(today, 'day');
 
     if (diff === 2) {
-      bot.sendMessage(CHAT_ID, `📅 Через 2 дня день рождения у "${name}"!`);
-    } else if (diff === 0) {
-      bot.sendMessage(CHAT_ID, `🎉 Поздравляем с днём рождения, "${name}"!`);
-    }
+        const msg = `📅 Через 2 дня день рождения у "${name}"!`;
+        console.log(msg);
+        bot.sendMessage(CHAT_ID, msg);
+      } else if (diff === 0) {
+        const msg = `🎉 Сегодня день рождения у "${name}"! Поздравляем!`;
+        console.log(msg);
+        bot.sendMessage(CHAT_ID, msg);
+      }
   });
 }
 
@@ -51,7 +55,32 @@ app.post('/webhook', (req, res) => {
   res.sendStatus(200);
 });
 
-app.get('/', (req, res) => res.send('Bot is running'));
+app.get('/', (req, res) => {
+    res.send(`
+      <html>
+        <head>
+          <title>Birthday Bot</title>
+          <style>
+            body {
+              font-family: Arial, sans-serif;
+              text-align: center;
+              margin-top: 100px;
+              background-color: #f9f9f9;
+              color: #333;
+            }
+            .emoji {
+              font-size: 3rem;
+            }
+          </style>
+        </head>
+        <body>
+          <div class="emoji">🎉🤖🎈</div>
+          <h1>Birthday Bot работает!</h1>
+          <p>Webhook установлен и бот на связи.</p>
+        </body>
+      </html>
+    `);
+  });
 
 app.listen(PORT, async () => {
   console.log(`Server listening on port ${PORT}`);
@@ -80,6 +109,12 @@ bot.onText(/\/start/, (msg) => {
   bot.sendMessage(msg.chat.id, 'Привет! Я бот для напоминания о днях рождения.');
 });
 
+bot.onText(/\/check/, (msg) => {
+    console.log('Команда /check получена от:', msg.from);
+    bot.sendMessage(msg.chat.id, '🔍 Проверяю дни рождения...');
+    checkBirthdays();
+  });
+  
 // Cron-задание для ежедневной проверки (пример — 06:35 UTC = 11:35 Ташкент)
 cron.schedule('00 7 * * *', () => {
   console.log('⏰ Автоматическая проверка дней рождений в 12:00 по Ташкенту (07:00 UTC)...');
