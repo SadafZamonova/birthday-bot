@@ -25,25 +25,36 @@ const bot = new TelegramBot(token, { webHook: true });
 
 const birthdays = require('./birthdays.json');
 
-function checkBirthdays() {
-  const today = dayjs().utc().startOf('day');
-  const thisYear = today.year();
-
-  birthdays.forEach(({ name, date }) => {
-    const birthdayThisYear = dayjs(`${thisYear}-${date}`);
-    const diff = birthdayThisYear.diff(today, 'day');
-
-    if (diff === 2) {
+function checkBirthdays(chatContext = null) {
+    const today = dayjs().utc().startOf('day');
+    const thisYear = today.year();
+    let found = false;
+  
+    birthdays.forEach(({ name, date }) => {
+      const birthdayThisYear = dayjs(`${thisYear}-${date}`);
+      const diff = birthdayThisYear.diff(today, 'day');
+  
+      if (diff === 2) {
         const msg = `📅 Через 2 дня день рождения у "${name}"!`;
         console.log(msg);
         bot.sendMessage(CHAT_ID, msg);
+        if (chatContext) bot.sendMessage(chatContext, msg);
+        found = true;
       } else if (diff === 0) {
         const msg = `🎉 Сегодня день рождения у "${name}"! Поздравляем!`;
         console.log(msg);
         bot.sendMessage(CHAT_ID, msg);
+        if (chatContext) bot.sendMessage(chatContext, msg);
+        found = true;
       }
-  });
-}
+    });
+  
+    if (!found && chatContext) {
+      const msg = '🎈 В ближайшие дни нет дней рождений.';
+      console.log(msg);
+      bot.sendMessage(chatContext, msg);
+    }
+  }
 
 app.post('/webhook', (req, res) => {
   bot.processUpdate(req.body);
@@ -107,7 +118,7 @@ bot.onText(/\/start/, (msg) => {
 bot.onText(/\/check/, (msg) => {
     console.log('Команда /check получена от:', msg.from);
     bot.sendMessage(msg.chat.id, '🔍 Проверяю дни рождения...');
-    checkBirthdays();
+    checkBirthdays(msg.chat.id); // ← передаём ID чата, чтобы отправить ответ
   });
 
 // Cron-задание для ежедневной проверки (пример — 06:35 UTC = 11:35 Ташкент)
