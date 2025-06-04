@@ -50,7 +50,7 @@ function checkBirthdays(chatContext = null) {
     });
   
     if (!found && chatContext) {
-      const msg = '🎈 В ближайшие дни нет дней рождений.';
+      const msg = '🎈 В ближайшие дни никто не празднует день рождения.';
       console.log(msg);
       bot.sendMessage(chatContext, msg);
     }
