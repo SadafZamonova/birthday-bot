@@ -1,5 +1,6 @@
 require('dotenv').config();
-console.log('TOKEN из .env:', process.env.TELEGRAM_TOKEN);
+console.log('Загруженный токен из .env:', process.env.TELEGRAM_TOKEN);
+
 const express = require('express');
 const TelegramBot = require('node-telegram-bot-api');
 const dayjs = require('dayjs');
@@ -13,22 +14,18 @@ const WEBHOOK_URL = process.env.WEBHOOK_URL;
 const CHAT_ID = process.env.CHAT_ID;
 const PORT = process.env.PORT || 3000;
 
-// Проверяем обязательные переменные окружения
 if (!token || !WEBHOOK_URL || !CHAT_ID) {
   console.error('ERROR: Отсутствуют обязательные переменные окружения TELEGRAM_TOKEN, WEBHOOK_URL или CHAT_ID');
   process.exit(1);
 }
 
-// Инициализируем бота с вебхуком
-const bot = new TelegramBot(token, { webHook: true });
 const app = express();
 app.use(express.json());
-bot.getMe()
-  .then(console.log)
-  .catch(console.error);
+
+const bot = new TelegramBot(token, { webHook: true });
+
 const birthdays = require('./birthdays.json');
 
-// Функция проверки дней рождения
 function checkBirthdays() {
   const today = dayjs().utc().startOf('day');
   const thisYear = today.year();
@@ -45,22 +42,31 @@ function checkBirthdays() {
   });
 }
 
-// Проверяем токен и ставим webhook
-bot.getMe()
-  .then(botInfo => {
+app.post('/webhook', (req, res) => {
+  bot.processUpdate(req.body);
+  res.sendStatus(200);
+});
+
+app.get('/', (req, res) => res.send('Bot is running'));
+
+app.listen(PORT, async () => {
+  console.log(`Server listening on port ${PORT}`);
+
+  try {
+    const botInfo = await bot.getMe();
     console.log('✅ Токен рабочий. Информация о боте:', botInfo);
 
-    return bot.setWebHook(`${WEBHOOK_URL}/webhook`);
-  })
-  .then(() => {
+    await bot.setWebHook(`${WEBHOOK_URL}/webhook`);
     console.log('Webhook установлен на:', `${WEBHOOK_URL}/webhook`);
-  })
-  .catch(err => {
+
+    bot.sendMessage(CHAT_ID, 'Бот запущен и готов отправлять сообщения!');
+    checkBirthdays();
+  } catch (err) {
     console.error('❌ Ошибка авторизации или установки webhook:', err);
     process.exit(1);
-  });
+  }
+});
 
-// Обработка команд и сообщений
 bot.on('message', (msg) => {
   console.log('Новое сообщение:', JSON.stringify(msg, null, 2));
 });
@@ -70,27 +76,8 @@ bot.onText(/\/start/, (msg) => {
   bot.sendMessage(msg.chat.id, 'Привет! Я бот для напоминания о днях рождения.');
 });
 
-// Маршрут для Telegram webhook
-app.post('/webhook', (req, res) => {
-  bot.processUpdate(req.body);
-  res.sendStatus(200);
-});
-
-app.get('/', (req, res) => res.send('Bot is running'));
-
-// Запуск сервера
-app.listen(PORT, () => {
-  console.log(`Server listening on port ${PORT}`);
-
-  // Уведомляем чат, что бот запущен
-  bot.sendMessage(CHAT_ID, 'Бот запущен и готов отправлять сообщения!');
-
-  // Тестовый вызов проверки дней рождения при запуске
-  checkBirthdays();
-});
-
-// Cron-задание для ежедневной проверки (в 10:25 по Ташкенту = 05:25 UTC)
-cron.schedule('25 6 * * *', () => {
-  console.log('⏰ Автоматическая проверка дней рождений в 11:25 по Ташкенту (06:25 UTC)...');
+// Cron-задание для ежедневной проверки (пример — 06:35 UTC = 11:35 Ташкент)
+cron.schedule('35 6 * * *', () => {
+  console.log('⏰ Автоматическая проверка дней рождений в 11:35 по Ташкенту (06:35 UTC)...');
   checkBirthdays();
 });
